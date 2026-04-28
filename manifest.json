@@ -1,0 +1,24 @@
+{
+  "id": "/lechplay-force-portrait",
+  "name": "LechPlay",
+  "short_name": "LechPlay",
+  "start_url": "./index.html?v=force-portrait-20260428",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "fullscreen",
+    "minimal-ui"
+  ],
+  "background_color": "#050507",
+  "theme_color": "#050507",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

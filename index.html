@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>LechPlayTV</title>
+<title>LechFlixTV v4</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 
@@ -64,6 +64,10 @@ button{cursor:pointer;border:0;color:#fff}
   background:rgba(229,9,20,.18);
   color:#fff;
   border:1px solid rgba(229,9,20,.4);
+}
+.nav button.favorites-tab{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
 }
 .searchbar{margin-left:auto;display:flex;gap:10px;align-items:center;min-width:260px;max-width:560px;flex:1}
 .searchbar input{
@@ -145,6 +149,17 @@ button{cursor:pointer;border:0;color:#fff}
   width:42px;height:42px;border-radius:999px;background:rgba(0,0,0,.72);
   border:1px solid rgba(255,255,255,.22);display:grid;place-items:center;
 }
+.star-btn{
+  position:absolute;right:10px;top:10px;z-index:5;
+  width:42px;height:42px;border-radius:999px;
+  background:rgba(0,0,0,.72);
+  border:1px solid rgba(255,255,255,.22);
+  display:grid;place-items:center;
+  font-size:22px;
+  color:#fff;
+}
+.star-btn.on{color:#fbbf24;background:rgba(0,0,0,.82)}
+.star-btn:active{transform:scale(.94)}
 .empty{
   padding:44px 18px;text-align:center;color:var(--muted);font-weight:900;
   border:1px dashed rgba(255,255,255,.16);border-radius:var(--radius);
@@ -184,6 +199,31 @@ video{
 .player.hide-ui .player-controls{opacity:0;pointer-events:none;transform:translateY(24px)}
 .progress{height:8px;background:rgba(255,255,255,.22);border-radius:999px;overflow:hidden;margin-bottom:14px}
 .progress span{display:block;height:100%;width:0;background:var(--red)}
+.player-time{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:-4px 2px 12px;
+  color:#e5e7eb;
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.01em;
+  text-shadow:0 2px 8px rgba(0,0,0,.85);
+}
+.player-time .remain{
+  color:#f3f4f6;
+}
+.player-time .total{
+  color:#a1a1aa;
+}
+@media (max-width:760px){
+  .player-time{
+    font-size:13px;
+    margin:-2px 2px 10px;
+  }
+}
+
 .controls-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
 .controls-row button{
   min-width:58px;height:52px;border-radius:16px;background:rgba(255,255,255,.15);
@@ -214,164 +254,249 @@ video{
 .danger{background:linear-gradient(135deg,var(--red),var(--red2))}
 .gray{background:rgba(255,255,255,.13);border:1px solid var(--line)}
 
-@media(max-width:760px){
-  .top{flex-wrap:wrap;gap:10px}
-  .nav{order:3;width:100%;overflow:auto;padding-bottom:2px}
-  .searchbar{order:2;min-width:100%;max-width:none;margin-left:0}
-  .status{display:none}
-  .hero{min-height:260px}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px}
-  .poster{height:190px}
-  .controls-row button{min-width:52px}
+
+/* =========================================================
+   NETFLIX CLEAN LAYOUT - TV + MOBILE
+   TV/landscape: one horizontal header, search compact on right.
+   Mobile/portrait: same style, compact rows, not stretched ugly.
+   ========================================================= */
+
+.status{
+  display:block;
 }
 
-/* MOBILE LANDSCAPE FIX */
-@media (orientation: landscape) and (max-height: 520px){
+/* TV / desktop / landscape */
+@media (orientation: landscape), (min-width: 900px){
   .top{
-    position:sticky;
-    display:grid;
-    grid-template-columns:auto auto 1fr auto;
-    gap:10px;
-    padding:8px 12px;
-    align-items:center;
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    gap:18px !important;
+    padding:14px clamp(24px,4vw,58px) !important;
+    overflow:hidden !important;
   }
 
   .logo{
-    font-size:22px;
-    min-width:0;
+    flex:0 0 auto !important;
+    white-space:nowrap !important;
+    font-size:clamp(26px,3vw,38px) !important;
   }
 
   .logo-mark{
-    width:42px;
-    height:42px;
-    border-radius:13px;
-    font-size:20px;
+    width:48px !important;
+    height:48px !important;
+    border-radius:15px !important;
   }
 
   .nav{
-    order:initial;
-    width:auto;
-    margin-left:0;
-    overflow:visible;
-    gap:6px;
+    flex:0 0 auto !important;
+    width:auto !important;
+    margin-left:8px !important;
+    display:flex !important;
+    gap:8px !important;
+    overflow:visible !important;
+    white-space:nowrap !important;
   }
 
   .nav button{
-    padding:9px 12px;
-    font-size:15px;
-    white-space:nowrap;
+    white-space:nowrap !important;
+    font-size:clamp(14px,1.4vw,17px) !important;
+    padding:10px 15px !important;
   }
 
   .searchbar{
-    order:initial;
-    min-width:0;
-    max-width:none;
-    margin-left:0;
-    gap:8px;
+    margin-left:auto !important;
+    flex:0 1 560px !important;
+    width:min(560px,36vw) !important;
+    min-width:320px !important;
+    max-width:560px !important;
+    display:flex !important;
+    gap:10px !important;
+    align-items:center !important;
   }
 
   .searchbar input{
-    height:42px;
-    font-size:15px;
-    padding:0 14px;
+    height:46px !important;
+    min-width:0 !important;
   }
 
   .searchbar button{
-    height:42px;
-    padding:0 14px;
-    font-size:15px;
-  }
-
-  .status{
-    display:none;
+    height:46px !important;
+    white-space:nowrap !important;
   }
 
   .hero{
-    min-height:210px;
-    padding:26px 18px 22px;
+    min-height:320px !important;
+    padding:54px clamp(28px,4vw,58px) 28px !important;
   }
 
   .hero h1{
-    font-size:48px;
-    line-height:.95;
-  }
-
-  .hero p{
-    font-size:18px;
-    max-width:760px;
-    margin-top:12px;
-  }
-
-  .hero-actions{
-    margin-top:16px;
-  }
-
-  .primary,.secondary{
-    padding:11px 16px;
-    font-size:16px;
+    font-size:clamp(48px,6vw,86px) !important;
   }
 
   .content{
-    padding:2px 18px 54px;
-  }
-
-  .section-head{
-    margin:18px 0 12px;
+    padding:4px clamp(28px,4vw,58px) 80px !important;
   }
 
   .grid{
-    grid-template-columns:repeat(auto-fill,minmax(135px,1fr));
-    gap:12px;
+    grid-template-columns:repeat(auto-fill,minmax(160px,1fr)) !important;
   }
 
   .poster{
-    height:185px;
+    height:238px !important;
   }
 }
 
-@media (orientation: landscape) and (max-height: 420px){
+/* Mobile portrait */
+@media (orientation: portrait) and (max-width: 899px){
   .top{
-    grid-template-columns:auto 1fr auto;
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    grid-template-areas:
+      "logo"
+      "nav"
+      "search" !important;
+    gap:10px !important;
+    padding:calc(10px + env(safe-area-inset-top,0px)) 14px 12px !important;
+    overflow:hidden !important;
+  }
+
+  .logo{
+    grid-area:logo !important;
+    white-space:nowrap !important;
+    font-size:clamp(26px,8vw,34px) !important;
+  }
+
+  .logo-mark{
+    width:44px !important;
+    height:44px !important;
+    border-radius:14px !important;
   }
 
   .nav{
-    grid-column:1 / -1;
-    overflow-x:auto;
-    padding-bottom:2px;
+    grid-area:nav !important;
+    width:100% !important;
+    margin-left:0 !important;
+    display:flex !important;
+    gap:8px !important;
+    overflow-x:auto !important;
+    white-space:nowrap !important;
+    scrollbar-width:none !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  .nav::-webkit-scrollbar{
+    display:none !important;
+  }
+
+  .nav button{
+    flex:0 0 auto !important;
+    font-size:16px !important;
+    padding:10px 14px !important;
+  }
+
+  .searchbar{
+    grid-area:search !important;
+    margin-left:0 !important;
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    gap:8px !important;
+  }
+
+  .searchbar input{
+    min-width:0 !important;
+    height:46px !important;
+    font-size:16px !important;
+  }
+
+  .searchbar button{
+    height:46px !important;
+    padding:0 16px !important;
+    white-space:nowrap !important;
+  }
+
+  .status{
+    display:none !important;
   }
 
   .hero{
-    min-height:150px;
-    padding:18px;
+    min-height:240px !important;
+    padding:28px 16px 18px !important;
   }
 
   .hero h1{
-    font-size:36px;
+    font-size:clamp(34px,10vw,48px) !important;
+    line-height:.95 !important;
   }
 
   .hero p{
-    font-size:15px;
+    font-size:16px !important;
   }
 
   .hero-actions{
-    display:none;
+    margin-top:18px !important;
+  }
+
+  .content{
+    padding:8px 14px 70px !important;
+  }
+
+  .section-head{
+    display:block !important;
+  }
+
+  .section-head h2{
+    font-size:30px !important;
+  }
+
+  .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:12px !important;
+  }
+
+  .poster{
+    height:185px !important;
+  }
+
+  .controls-row button{
+    min-width:52px !important;
+  }
+}
+
+/* Very small phones */
+@media (orientation: portrait) and (max-width: 420px){
+  .nav button{
+    font-size:15px !important;
+    padding:9px 12px !important;
+  }
+
+  .searchbar button{
+    padding:0 13px !important;
+  }
+
+  .poster{
+    height:172px !important;
   }
 }
 
 </style>
 </head>
 
-<body>
+<body data-build="lechflix-netflix-clean-tv-mobile">
 <div class="app">
   <header class="top">
     <div class="logo" id="logo" title="Klikni 5× pre tajnú sekciu">
       <div class="logo-mark">▶</div>
-      <span>LECHPLAY</span>
+      <span>LECHFLIX</span>
     </div>
 
     <nav class="nav">
       <button id="tabVideo" class="active" data-cat="video">Filmy</button>
       <button id="tabAudio" data-cat="audio">Hudba</button>
+      <button id="tabFavorites" class="favorites-tab" data-cat="favorites">⭐ Obľúbené</button>
       <button id="tabAdult" class="adult" data-cat="adult">18+</button>
     </nav>
 
@@ -385,8 +510,8 @@ video{
 
   <section class="hero">
     <div>
-      <h1 id="heroTitle">Filmy ako Netflix.</h1>
-      <p id="heroText">Vyhľadávaj na Webshare, prehrávaj priamo v appke a používaj jednoduchý prehrávač prispôsobený celej obrazovke.</p>
+      <h1 id="heroTitle">Filmy ako Lechflix.</h1>
+      <p id="heroText">Vyhľadávaj na LechFlix, prehrávaj priamo v appke a používaj jednoduchý prehrávač prispôsobený celej obrazovke.</p>
       <div class="hero-actions">
         <button class="primary" id="heroSearch">Hľadať teraz</button>
         <button class="secondary" id="heroAdult">Odomknúť 18+</button>
@@ -422,6 +547,11 @@ video{
 
     <div class="player-controls">
       <div class="progress"><span id="bar"></span></div>
+      <div class="player-time" id="playerTime">
+        <span id="timeCurrent">0:00</span>
+        <span class="remain" id="timeRemain">Zostáva --:--</span>
+        <span class="total" id="timeTotal">--:--</span>
+      </div>
       <div class="controls-row">
         <button id="rewBtn">−10s</button>
         <button id="playBtn" class="big">▶</button>
@@ -468,6 +598,7 @@ let currentOffset = 0;
 let currentLimit = 40;
 let hasMore = false;
 let loadingMore = false;
+let favorites = [];
 let logoClicks = 0;
 let controlsTimer = null;
 
@@ -485,6 +616,9 @@ const bar = $("bar");
 const playerTitle = $("playerTitle");
 const playerError = $("playerError");
 const loadMoreBtn = $("loadMore");
+const timeCurrent = $("timeCurrent");
+const timeRemain = $("timeRemain");
+const timeTotal = $("timeTotal");
 
 function esc(s){
   return String(s || "").replace(/[&<>"']/g, c => ({
@@ -503,8 +637,97 @@ function fmtSize(bytes){
 
 function setStatus(t){ statusEl.textContent = t; }
 
+function fmtTime(sec){
+  sec = Math.max(0, Math.floor(Number(sec) || 0));
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  if (h > 0) return h + ":" + String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+  return m + ":" + String(s).padStart(2,"0");
+}
+
+function updatePlayerTime(){
+  if (!timeCurrent || !timeRemain || !timeTotal) return;
+
+  const cur = Number(video.currentTime || 0);
+  const dur = Number(video.duration || 0);
+
+  timeCurrent.textContent = fmtTime(cur);
+
+  if (isFinite(dur) && dur > 0){
+    timeTotal.textContent = fmtTime(dur);
+    timeRemain.textContent = "Zostáva " + fmtTime(Math.max(0, dur - cur));
+  }else{
+    timeTotal.textContent = "--:--";
+    timeRemain.textContent = "Zostáva --:--";
+  }
+}
+
 function refreshAdultButton(){
   tabAdult.style.display = adultUnlocked ? "inline-flex" : "none";
+}
+
+async function loadFavorites(){
+  try{
+    const res = await fetch(API_BASE + "/api/favorites", { headers:{accept:"application/json"} });
+    const data = await res.json();
+    if (data.error) throw new Error(data.message || "Chyba favorites");
+    favorites = Array.isArray(data.items) ? data.items : [];
+  }catch(e){
+    favorites = [];
+    setStatus("Obľúbené sa nenačítali: " + (e.message || "chyba siete"));
+  }
+}
+
+function isFav(it){
+  return !!favorites.find(f => f.ident === it.ident);
+}
+
+async function toggleFavorite(it, ev){
+  if (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+  }
+
+  if (!it || !it.ident) return;
+
+  const wasFav = isFav(it);
+
+  try{
+    if (wasFav){
+      await fetch(API_BASE + "/api/favorite?ident=" + encodeURIComponent(it.ident), {
+        method:"DELETE",
+        headers:{accept:"application/json"}
+      });
+
+      favorites = favorites.filter(f => f.ident !== it.ident);
+
+      if (category === "favorites") {
+        items = items.filter(x => x.ident !== it.ident);
+      }
+
+      setStatus("Odstránené z obľúbených");
+    }else{
+      const res = await fetch(API_BASE + "/api/favorite", {
+        method:"POST",
+        headers:{
+          "content-type":"application/json",
+          accept:"application/json"
+        },
+        body: JSON.stringify(it)
+      });
+
+      const data = await res.json();
+      if (data.error) throw new Error(data.message || "Chyba uloženia");
+
+      favorites = [data.item, ...favorites.filter(f => f.ident !== it.ident)];
+      setStatus("Pridané do obľúbených");
+    }
+
+    render();
+  }catch(e){
+    setStatus(e.message || "Chyba obľúbených");
+  }
 }
 
 function setCategory(cat){
@@ -523,15 +746,15 @@ function setCategory(cat){
 
   if (cat === "video"){
     q.placeholder = "Hľadať film...";
-    $("heroTitle").textContent = "Filmy ako Netflix.";
-    $("heroText").textContent = "Vyhľadávaj filmy na Webshare a prehrávaj ich priamo v appke.";
+    $("heroTitle").textContent = "Filmy ako LechFlix.";
+    $("heroText").textContent = "Vyhľadávaj filmy na LechFlix a prehrávaj ich priamo v appke.";
     sectionTitle.textContent = "Filmy";
   }
 
   if (cat === "audio"){
     q.placeholder = "Hľadať hudbu...";
     $("heroTitle").textContent = "Hudba v TV režime.";
-    $("heroText").textContent = "Vyhľadávaj skladby a audio súbory cez Webshare.";
+    $("heroText").textContent = "Vyhľadávaj skladby a audio súbory cez LechFlix.";
     sectionTitle.textContent = "Hudba";
   }
 
@@ -540,6 +763,32 @@ function setCategory(cat){
     $("heroTitle").textContent = "18+ sekcia.";
     $("heroText").textContent = "Súkromná sekcia je odomknutá. Vyhľadávanie ide cez Webshare adult kategóriu.";
     sectionTitle.textContent = "18+";
+  }
+
+  if (cat === "favorites"){
+    q.placeholder = "Hľadať v obľúbených...";
+    $("heroTitle").textContent = "Tvoje obľúbené.";
+    $("heroText").textContent = "Videá uložené cez worker, dostupné na každom zariadení.";
+    sectionTitle.textContent = "Obľúbené";
+    sectionMeta.textContent = "Načítavam obľúbené...";
+    empty.textContent = "Načítavam obľúbené...";
+    empty.style.display = "block";
+    grid.innerHTML = "";
+
+    // TV/WebView fix: pri otvorení tabu Obľúbené vždy znova načítaj worker.
+    // Ak TV pri štarte ešte nemala sieť, prvé loadFavorites() mohlo zlyhať.
+    loadFavorites().then(() => {
+      items = [...favorites];
+      currentOffset = 0;
+      hasMore = false;
+      updateLoadMoreButton();
+      render();
+      sectionMeta.textContent = "Uložené: " + favorites.length;
+      empty.textContent = favorites.length ? "" : "Zatiaľ nemáš žiadne obľúbené.";
+      empty.style.display = favorites.length ? "none" : "block";
+    });
+
+    return;
   }
 
   items = [];
@@ -553,6 +802,16 @@ function setCategory(cat){
 }
 
 async function search(){
+  if (category === "favorites"){
+    const termFav = q.value.trim().toLowerCase();
+    items = favorites.filter(it => !termFav || String(it.title || it.name || "").toLowerCase().includes(termFav));
+    render();
+    sectionMeta.textContent = "Obľúbené: " + items.length;
+    empty.textContent = items.length ? "" : "Nič sa nenašlo v obľúbených.";
+    empty.style.display = items.length ? "none" : "block";
+    return;
+  }
+
   const term = q.value.trim();
   if (!term){
     setStatus("Zadaj názov");
@@ -641,6 +900,7 @@ function render(){
     const img = it.image || it.stripe || "";
     el.innerHTML = `
       <div class="play-pill">▶</div>
+      <button class="star-btn ${isFav(it) ? "on" : ""}" title="Obľúbené">${isFav(it) ? "★" : "☆"}</button>
       <div class="poster">${img ? `<img src="${esc(img)}" alt="">` : "▶"}</div>
       <div class="card-body">
         <div class="title">${esc(it.title || it.name || "Bez názvu")}</div>
@@ -650,6 +910,8 @@ function render(){
         </div>
       </div>
     `;
+    const star = el.querySelector(".star-btn");
+    star.onclick = (ev) => toggleFavorite(it, ev);
     el.onclick = () => playItem(it);
     el.onkeydown = e => {
       if(e.key === "Enter"){
@@ -669,6 +931,7 @@ async function playItem(it){
   playerError.style.display = "none";
   playerTitle.textContent = it.title || it.name || "Prehrávač";
   bar.style.width = "0";
+  updatePlayerTime();
   video.pause();
   video.removeAttribute("src");
   video.load();
@@ -703,6 +966,7 @@ function closePlayer(){
   video.pause();
   video.removeAttribute("src");
   video.load();
+  updatePlayerTime();
   player.classList.remove("active");
   setStatus("Pripravené");
 }
@@ -819,7 +1083,10 @@ $("fullBtn").onclick = fullscreen;
 
 video.addEventListener("timeupdate", () => {
   if (video.duration) bar.style.width = ((video.currentTime / video.duration) * 100) + "%";
+  updatePlayerTime();
 });
+video.addEventListener("loadedmetadata", updatePlayerTime);
+video.addEventListener("durationchange", updatePlayerTime);
 video.addEventListener("play", () => {
   updatePlayButton();
   scheduleHidePlayerUi();
@@ -858,7 +1125,7 @@ document.addEventListener("keydown", e => {
 
 refreshAdultButton();
 updateLoadMoreButton();
-setCategory("video");
+loadFavorites().then(() => setCategory("video"));
 </script>
 </body>
 </html>
