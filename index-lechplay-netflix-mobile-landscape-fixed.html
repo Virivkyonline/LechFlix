@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LechPlayTV</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+
+<style>
+:root{
+  --bg:#050507;
+  --panel:#111116;
+  --panel2:#181820;
+  --text:#fff;
+  --muted:#a1a1aa;
+  --line:rgba(255,255,255,.12);
+  --red:#e50914;
+  --red2:#b20710;
+  --focus:rgba(229,9,20,.45);
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+body{overflow-y:auto;overflow-x:hidden}
+button,input{font:inherit}
+button{cursor:pointer;border:0;color:#fff}
+.app{min-height:100vh;background:
+  radial-gradient(900px 500px at 80px -120px,rgba(229,9,20,.26),transparent 60%),
+  linear-gradient(180deg,#07070a 0%,#050507 45%,#030304 100%);
+}
+
+/* TOP */
+.top{
+  position:sticky;top:0;z-index:30;
+  display:flex;align-items:center;gap:18px;
+  padding:14px clamp(14px,3vw,42px);
+  background:linear-gradient(180deg,rgba(0,0,0,.94),rgba(0,0,0,.72));
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.logo{
+  display:flex;align-items:center;gap:10px;
+  font-weight:1000;letter-spacing:-.05em;
+  font-size:clamp(24px,4vw,38px);
+  color:var(--red);
+  user-select:none;
+}
+.logo-mark{
+  width:42px;height:42px;border-radius:14px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--red),#7f0006);
+  color:#fff;font-size:22px;
+  box-shadow:0 14px 42px rgba(229,9,20,.35);
+}
+.nav{display:flex;align-items:center;gap:8px;margin-left:8px}
+.nav button{
+  padding:11px 15px;border-radius:999px;
+  background:transparent;color:#d4d4d8;font-weight:800;
+}
+.nav button.active{background:#fff;color:#000}
+.nav button.adult{
+  display:none;
+  background:rgba(229,9,20,.18);
+  color:#fff;
+  border:1px solid rgba(229,9,20,.4);
+}
+.searchbar{margin-left:auto;display:flex;gap:10px;align-items:center;min-width:260px;max-width:560px;flex:1}
+.searchbar input{
+  width:100%;height:46px;border-radius:999px;border:1px solid var(--line);
+  background:rgba(255,255,255,.08);color:#fff;padding:0 18px;outline:none;
+  font-size:16px;
+}
+.searchbar input:focus{border-color:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.12)}
+.searchbar button{
+  height:46px;padding:0 18px;border-radius:999px;
+  background:linear-gradient(135deg,var(--red),var(--red2));
+  font-weight:900;
+}
+.status{font-size:13px;color:var(--muted);font-weight:700;white-space:nowrap}
+
+/* HERO */
+.hero{
+  min-height:320px;padding:54px clamp(14px,4vw,58px) 28px;
+  display:flex;align-items:flex-end;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.88),rgba(0,0,0,.45),rgba(0,0,0,.08)),
+    radial-gradient(900px 360px at 80% 20%,rgba(229,9,20,.25),transparent 62%);
+}
+.hero h1{margin:0;font-size:clamp(38px,8vw,86px);line-height:.9;letter-spacing:-.075em}
+.hero p{max-width:740px;margin:18px 0 0;color:#d4d4d8;font-size:clamp(16px,2vw,22px);font-weight:650}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.primary,.secondary{
+  padding:14px 20px;border-radius:14px;font-weight:1000;font-size:18px;
+}
+.primary{background:#fff;color:#000}
+.secondary{background:rgba(255,255,255,.16);border:1px solid var(--line)}
+#heroAdult{display:none}
+
+/* LOAD MORE */
+.load-more-wrap{
+  display:flex;
+  justify-content:center;
+  margin:30px 0 0;
+}
+.load-more{
+  display:none;
+  min-width:220px;
+  padding:16px 24px;
+  border-radius:999px;
+  background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.18);
+  font-weight:1000;
+  font-size:18px;
+}
+.load-more:hover{
+  background:#fff;
+  color:#000;
+}
+
+/* CONTENT */
+.content{padding:4px clamp(14px,4vw,58px) 80px}
+.section-head{display:flex;align-items:end;gap:14px;margin:26px 0 14px}
+.section-head h2{margin:0;font-size:clamp(22px,3vw,34px);letter-spacing:-.04em}
+.section-head small{color:var(--muted);font-weight:800}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:16px;
+}
+.card{
+  position:relative;overflow:hidden;border-radius:18px;background:var(--panel);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 18px 48px rgba(0,0,0,.24);
+  transition:.16s ease;
+}
+.card:hover,.card:focus-within{transform:translateY(-4px) scale(1.02);border-color:rgba(255,255,255,.25)}
+.poster{height:238px;background:linear-gradient(135deg,#24242d,#0f0f13);display:grid;place-items:center;color:#71717a;font-size:42px}
+.poster img{width:100%;height:100%;object-fit:cover;display:block}
+.card-body{padding:12px}
+.title{font-weight:900;line-height:1.18;font-size:15px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:36px}
+.meta{display:flex;justify-content:space-between;gap:8px;margin-top:9px;color:var(--muted);font-size:12px;font-weight:800}
+.play-pill{
+  position:absolute;left:10px;top:10px;
+  width:42px;height:42px;border-radius:999px;background:rgba(0,0,0,.72);
+  border:1px solid rgba(255,255,255,.22);display:grid;place-items:center;
+}
+.empty{
+  padding:44px 18px;text-align:center;color:var(--muted);font-weight:900;
+  border:1px dashed rgba(255,255,255,.16);border-radius:var(--radius);
+  background:rgba(255,255,255,.04);
+}
+
+/* PLAYER */
+.player{
+  position:fixed;inset:0;background:#000;z-index:80;display:none;
+}
+.player.active{display:flex;flex-direction:column}
+.video-wrap{position:relative;flex:1;min-height:0;display:grid;place-items:center;background:#000}
+video{
+  width:100%;height:100%;
+  max-width:100vw;max-height:100vh;
+  object-fit:contain;background:#000;
+}
+.player-top{
+  position:absolute;top:env(safe-area-inset-top,0);left:0;right:0;z-index:3;
+  display:flex;align-items:center;gap:12px;padding:14px 18px;
+  background:linear-gradient(180deg,rgba(0,0,0,.72),transparent);
+  opacity:1;transform:translateY(0);transition:.25s ease;
+}
+.player-title{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(16px,2.4vw,28px)}
+.icon-btn{
+  min-width:48px;height:48px;border-radius:999px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);
+  display:grid;place-items:center;font-size:20px;font-weight:1000;
+}
+.player-controls{
+  position:absolute;left:0;right:0;bottom:0;z-index:4;
+  padding:16px 18px calc(18px + env(safe-area-inset-bottom,0));
+  background:linear-gradient(0deg,rgba(0,0,0,.88),transparent);
+  opacity:1;transform:translateY(0);transition:.25s ease;
+}
+.player.hide-ui .player-top{opacity:0;pointer-events:none;transform:translateY(-14px)}
+.player.hide-ui .player-controls{opacity:0;pointer-events:none;transform:translateY(24px)}
+.progress{height:8px;background:rgba(255,255,255,.22);border-radius:999px;overflow:hidden;margin-bottom:14px}
+.progress span{display:block;height:100%;width:0;background:var(--red)}
+.controls-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.controls-row button{
+  min-width:58px;height:52px;border-radius:16px;background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.17);font-size:18px;font-weight:1000;
+}
+.controls-row .big{min-width:76px;background:#fff;color:#000}
+.error-box{position:absolute;left:18px;right:18px;top:45%;text-align:center;color:#fff;font-weight:900;display:none}
+
+/* MODALS */
+.overlay{
+  position:fixed;inset:0;z-index:100;display:none;place-items:center;
+  background:rgba(0,0,0,.82);backdrop-filter:blur(14px);padding:18px;
+}
+.overlay.active{display:grid}
+.modal{
+  width:min(540px,94vw);border-radius:28px;background:linear-gradient(180deg,#1c1c22,#0d0d10);
+  border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 110px rgba(0,0,0,.7);
+  padding:28px;
+}
+.modal h2{margin:0 0 12px;font-size:32px;letter-spacing:-.04em}
+.modal p{margin:0 0 20px;color:#d4d4d8;font-weight:650;line-height:1.45}
+.modal input{
+  width:100%;height:54px;border-radius:16px;border:1px solid var(--line);
+  background:rgba(255,255,255,.08);color:#fff;padding:0 16px;font-size:22px;outline:none;
+}
+.modal-actions{display:flex;gap:12px;margin-top:16px}
+.modal-actions button{flex:1;padding:14px;border-radius:16px;font-weight:1000}
+.danger{background:linear-gradient(135deg,var(--red),var(--red2))}
+.gray{background:rgba(255,255,255,.13);border:1px solid var(--line)}
+
+@media(max-width:760px){
+  .top{flex-wrap:wrap;gap:10px}
+  .nav{order:3;width:100%;overflow:auto;padding-bottom:2px}
+  .searchbar{order:2;min-width:100%;max-width:none;margin-left:0}
+  .status{display:none}
+  .hero{min-height:260px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px}
+  .poster{height:190px}
+  .controls-row button{min-width:52px}
+}
+
+/* MOBILE LANDSCAPE FIX */
+@media (orientation: landscape) and (max-height: 520px){
+  .top{
+    position:sticky;
+    display:grid;
+    grid-template-columns:auto auto 1fr auto;
+    gap:10px;
+    padding:8px 12px;
+    align-items:center;
+  }
+
+  .logo{
+    font-size:22px;
+    min-width:0;
+  }
+
+  .logo-mark{
+    width:42px;
+    height:42px;
+    border-radius:13px;
+    font-size:20px;
+  }
+
+  .nav{
+    order:initial;
+    width:auto;
+    margin-left:0;
+    overflow:visible;
+    gap:6px;
+  }
+
+  .nav button{
+    padding:9px 12px;
+    font-size:15px;
+    white-space:nowrap;
+  }
+
+  .searchbar{
+    order:initial;
+    min-width:0;
+    max-width:none;
+    margin-left:0;
+    gap:8px;
+  }
+
+  .searchbar input{
+    height:42px;
+    font-size:15px;
+    padding:0 14px;
+  }
+
+  .searchbar button{
+    height:42px;
+    padding:0 14px;
+    font-size:15px;
+  }
+
+  .status{
+    display:none;
+  }
+
+  .hero{
+    min-height:210px;
+    padding:26px 18px 22px;
+  }
+
+  .hero h1{
+    font-size:48px;
+    line-height:.95;
+  }
+
+  .hero p{
+    font-size:18px;
+    max-width:760px;
+    margin-top:12px;
+  }
+
+  .hero-actions{
+    margin-top:16px;
+  }
+
+  .primary,.secondary{
+    padding:11px 16px;
+    font-size:16px;
+  }
+
+  .content{
+    padding:2px 18px 54px;
+  }
+
+  .section-head{
+    margin:18px 0 12px;
+  }
+
+  .grid{
+    grid-template-columns:repeat(auto-fill,minmax(135px,1fr));
+    gap:12px;
+  }
+
+  .poster{
+    height:185px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 420px){
+  .top{
+    grid-template-columns:auto 1fr auto;
+  }
+
+  .nav{
+    grid-column:1 / -1;
+    overflow-x:auto;
+    padding-bottom:2px;
+  }
+
+  .hero{
+    min-height:150px;
+    padding:18px;
+  }
+
+  .hero h1{
+    font-size:36px;
+  }
+
+  .hero p{
+    font-size:15px;
+  }
+
+  .hero-actions{
+    display:none;
+  }
+}
+
+</style>
+</head>
+
+<body>
+<div class="app">
+  <header class="top">
+    <div class="logo" id="logo" title="Klikni 5× pre tajnú sekciu">
+      <div class="logo-mark">▶</div>
+      <span>LECHPLAY</span>
+    </div>
+
+    <nav class="nav">
+      <button id="tabVideo" class="active" data-cat="video">Filmy</button>
+      <button id="tabAudio" data-cat="audio">Hudba</button>
+      <button id="tabAdult" class="adult" data-cat="adult">18+</button>
+    </nav>
+
+    <form class="searchbar" id="searchForm">
+      <input id="q" type="search" placeholder="Hľadať film..." autocomplete="off" spellcheck="false">
+      <button type="submit">Hľadať</button>
+    </form>
+
+    <div class="status" id="status">Pripravené</div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1 id="heroTitle">Filmy ako Netflix.</h1>
+      <p id="heroText">Vyhľadávaj na Webshare, prehrávaj priamo v appke a používaj jednoduchý prehrávač prispôsobený celej obrazovke.</p>
+      <div class="hero-actions">
+        <button class="primary" id="heroSearch">Hľadať teraz</button>
+        <button class="secondary" id="heroAdult">Odomknúť 18+</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="content">
+    <div class="section-head">
+      <h2 id="sectionTitle">Výsledky</h2>
+      <small id="sectionMeta">Zadaj názov a stlač Hľadať</small>
+    </div>
+
+    <div id="empty" class="empty">Zatiaľ nič nehľadáš.</div>
+    <div id="grid" class="grid"></div>
+
+    <div class="load-more-wrap">
+      <button id="loadMore" class="load-more">Načítať ďalšie</button>
+    </div>
+  </main>
+</div>
+
+<section class="player" id="player">
+  <div class="video-wrap" id="videoWrap">
+    <video id="video" playsinline preload="metadata"></video>
+
+    <div class="player-top">
+      <button class="icon-btn" id="backBtn">←</button>
+      <div class="player-title" id="playerTitle">Prehrávač</div>
+    </div>
+
+    <div class="error-box" id="playerError"></div>
+
+    <div class="player-controls">
+      <div class="progress"><span id="bar"></span></div>
+      <div class="controls-row">
+        <button id="rewBtn">−10s</button>
+        <button id="playBtn" class="big">▶</button>
+        <button id="fwdBtn">+10s</button>
+        <button id="stopBtn">Stop</button>
+        <button id="fullBtn">⛶</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="overlay" id="pinOverlay">
+  <div class="modal">
+    <h2>🔒 Tajná sekcia</h2>
+    <p>Zadaj PIN. Potom ešte potvrdíš, že máš viac ako 18 rokov.</p>
+    <input id="pinInput" type="password" inputmode="numeric" placeholder="PIN">
+    <div class="modal-actions">
+      <button class="danger" id="pinOk">OK</button>
+      <button class="gray" id="pinCancel">Zrušiť</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ageOverlay">
+  <div class="modal">
+    <h2>🔞 Obsah pre dospelých</h2>
+    <p>Pokračuj iba ak máš viac ako 18 rokov a chceš zobraziť sekciu pre dospelých.</p>
+    <div class="modal-actions">
+      <button class="danger" id="ageYes">Mám viac ako 18 rokov</button>
+      <button class="gray" id="ageNo">Nie</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = "https://websharetv-worker.virivkyonlinecz.workers.dev";
+const SECRET_PIN = "7808";
+
+let category = "video";
+let adultUnlocked = false;
+let items = [];
+let lastQuery = "";
+let currentOffset = 0;
+let currentLimit = 40;
+let hasMore = false;
+let loadingMore = false;
+let logoClicks = 0;
+let controlsTimer = null;
+
+const $ = id => document.getElementById(id);
+const grid = $("grid");
+const empty = $("empty");
+const statusEl = $("status");
+const q = $("q");
+const sectionTitle = $("sectionTitle");
+const sectionMeta = $("sectionMeta");
+const tabAdult = $("tabAdult");
+const player = $("player");
+const video = $("video");
+const bar = $("bar");
+const playerTitle = $("playerTitle");
+const playerError = $("playerError");
+const loadMoreBtn = $("loadMore");
+
+function esc(s){
+  return String(s || "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function fmtSize(bytes){
+  const n = Number(bytes || 0);
+  if (!n) return "";
+  const units = ["B","KB","MB","GB","TB"];
+  let v = n, i = 0;
+  while (v >= 1024 && i < units.length - 1){ v /= 1024; i++; }
+  return v.toFixed(i < 2 ? 0 : 1) + " " + units[i];
+}
+
+function setStatus(t){ statusEl.textContent = t; }
+
+function refreshAdultButton(){
+  tabAdult.style.display = adultUnlocked ? "inline-flex" : "none";
+}
+
+function setCategory(cat){
+  if (cat === "adult" && !adultUnlocked){
+    openPin();
+    return;
+  }
+
+  if (cat !== "adult" && adultUnlocked){
+    adultUnlocked = false;
+    refreshAdultButton();
+  }
+
+  category = cat;
+  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.cat === cat));
+
+  if (cat === "video"){
+    q.placeholder = "Hľadať film...";
+    $("heroTitle").textContent = "Filmy ako Netflix.";
+    $("heroText").textContent = "Vyhľadávaj filmy na Webshare a prehrávaj ich priamo v appke.";
+    sectionTitle.textContent = "Filmy";
+  }
+
+  if (cat === "audio"){
+    q.placeholder = "Hľadať hudbu...";
+    $("heroTitle").textContent = "Hudba v TV režime.";
+    $("heroText").textContent = "Vyhľadávaj skladby a audio súbory cez Webshare.";
+    sectionTitle.textContent = "Hudba";
+  }
+
+  if (cat === "adult"){
+    q.placeholder = "Hľadať 18+...";
+    $("heroTitle").textContent = "18+ sekcia.";
+    $("heroText").textContent = "Súkromná sekcia je odomknutá. Vyhľadávanie ide cez Webshare adult kategóriu.";
+    sectionTitle.textContent = "18+";
+  }
+
+  items = [];
+  currentOffset = 0;
+  hasMore = false;
+  updateLoadMoreButton();
+  render();
+  sectionMeta.textContent = "Zadaj názov a stlač Hľadať";
+  empty.textContent = "Zatiaľ nič nehľadáš.";
+  empty.style.display = "block";
+}
+
+async function search(){
+  const term = q.value.trim();
+  if (!term){
+    setStatus("Zadaj názov");
+    q.focus();
+    return;
+  }
+
+  lastQuery = term;
+  currentOffset = 0;
+  hasMore = false;
+  updateLoadMoreButton();
+
+  setStatus("Hľadám...");
+  sectionMeta.textContent = "Hľadám „" + term + "“…";
+  empty.textContent = "Hľadám...";
+  empty.style.display = "block";
+  grid.innerHTML = "";
+  items = [];
+
+  await fetchPage(false);
+}
+
+async function fetchPage(append){
+  if (loadingMore) return;
+  if (!lastQuery) return;
+
+  loadingMore = true;
+  updateLoadMoreButton();
+
+  try{
+    const url =
+      API_BASE +
+      "/api/search?q=" + encodeURIComponent(lastQuery) +
+      "&category=" + encodeURIComponent(category) +
+      "&offset=" + encodeURIComponent(currentOffset) +
+      "&limit=" + encodeURIComponent(currentLimit);
+
+    const res = await fetch(url, { headers:{accept:"application/json"} });
+    const data = await res.json();
+    if (data.error) throw new Error(data.message || "Chyba API");
+
+    const newItems = Array.isArray(data.items) ? data.items : [];
+
+    if (append) items = items.concat(newItems);
+    else items = newItems;
+
+    currentOffset = Number(data.nextOffset ?? (currentOffset + currentLimit));
+    hasMore = Boolean(data.hasMore ?? (newItems.length >= currentLimit));
+
+    render();
+
+    sectionMeta.textContent =
+      "Zobrazené: " + items.length +
+      (hasMore ? " · môžeš načítať ďalšie" : " · koniec výsledkov") +
+      " · kategória: " + category;
+
+    setStatus(items.length ? "Hotovo" : "Nič sa nenašlo");
+    empty.textContent = items.length ? "" : "Nič sa nenašlo.";
+
+  }catch(e){
+    empty.style.display = items.length ? "none" : "block";
+    empty.textContent = e.message || "Chyba";
+    sectionMeta.textContent = "Chyba pri hľadaní";
+    setStatus("Chyba");
+  }finally{
+    loadingMore = false;
+    updateLoadMoreButton();
+  }
+}
+
+function updateLoadMoreButton(){
+  if (!loadMoreBtn) return;
+  loadMoreBtn.style.display = hasMore || loadingMore ? "inline-flex" : "none";
+  loadMoreBtn.disabled = loadingMore;
+  loadMoreBtn.textContent = loadingMore ? "Načítavam..." : "Načítať ďalšie";
+}
+
+function render(){
+  grid.innerHTML = "";
+  empty.style.display = items.length ? "none" : "block";
+
+  items.forEach((it) => {
+    const el = document.createElement("article");
+    el.className = "card";
+    el.tabIndex = 0;
+    const img = it.image || it.stripe || "";
+    el.innerHTML = `
+      <div class="play-pill">▶</div>
+      <div class="poster">${img ? `<img src="${esc(img)}" alt="">` : "▶"}</div>
+      <div class="card-body">
+        <div class="title">${esc(it.title || it.name || "Bez názvu")}</div>
+        <div class="meta">
+          <span>${esc((it.type || "").replace("video/","").replace("audio/",""))}</span>
+          <span>${esc(fmtSize(it.size))}</span>
+        </div>
+      </div>
+    `;
+    el.onclick = () => playItem(it);
+    el.onkeydown = e => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        playItem(it);
+      }
+    };
+    grid.appendChild(el);
+  });
+}
+
+async function playItem(it){
+  if (!it || !it.ident) return;
+
+  player.classList.add("active");
+  showPlayerUi();
+  playerError.style.display = "none";
+  playerTitle.textContent = it.title || it.name || "Prehrávač";
+  bar.style.width = "0";
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+
+  try{
+    setStatus("Načítavam prehrávanie...");
+    const res = await fetch(API_BASE + "/api/play?ident=" + encodeURIComponent(it.ident), {
+      headers:{accept:"application/json"}
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.message || "Chyba prehrávania");
+
+    const src = data.proxyUrl ? API_BASE + data.proxyUrl : data.videoUrl || data.directLink;
+    if (!src) throw new Error("Nenašiel sa video link.");
+
+    video.src = src;
+    await video.play().catch(() => {});
+    updatePlayButton();
+    scheduleHidePlayerUi();
+    setStatus("Prehrávam");
+
+  }catch(e){
+    playerError.textContent = (e.message || "Chyba prehrávania") + " Ak ide obraz bez zvuku, prehliadač nepodporuje audio kodek súboru. Skús MP4/AAC verziu.";
+    playerError.style.display = "block";
+    setStatus("Chyba prehrávania");
+  }
+}
+
+function closePlayer(){
+  clearTimeout(controlsTimer);
+  player.classList.remove("hide-ui");
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+  player.classList.remove("active");
+  setStatus("Pripravené");
+}
+
+function togglePlay(){
+  if (video.paused) video.play().catch(() => {});
+  else video.pause();
+  updatePlayButton();
+  showPlayerUi();
+}
+
+function updatePlayButton(){
+  $("playBtn").textContent = video.paused ? "▶" : "⏸";
+}
+
+function seek(sec){
+  if (!isFinite(video.duration)) return;
+  video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + sec));
+  showPlayerUi();
+}
+
+async function fullscreen(){
+  try{
+    if (!document.fullscreenElement) await player.requestFullscreen();
+    else await document.exitFullscreen();
+  }catch(e){}
+  showPlayerUi();
+}
+
+function showPlayerUi(){
+  player.classList.remove("hide-ui");
+  scheduleHidePlayerUi();
+}
+
+function scheduleHidePlayerUi(){
+  clearTimeout(controlsTimer);
+  if (!player.classList.contains("active")) return;
+  controlsTimer = setTimeout(() => {
+    if (!video.paused && player.classList.contains("active")) {
+      player.classList.add("hide-ui");
+    }
+  }, 3000);
+}
+
+function openPin(){
+  $("pinOverlay").classList.add("active");
+  $("pinInput").value = "";
+  setTimeout(() => $("pinInput").focus(), 50);
+}
+
+function closePin(){
+  $("pinOverlay").classList.remove("active");
+  $("pinInput").value = "";
+}
+
+function checkPin(){
+  if ($("pinInput").value === SECRET_PIN){
+    closePin();
+    $("ageOverlay").classList.add("active");
+  }else{
+    $("pinInput").value = "";
+    setStatus("Nesprávny PIN");
+  }
+}
+
+function unlockAdult(){
+  adultUnlocked = true;
+  refreshAdultButton();
+  $("ageOverlay").classList.remove("active");
+  setCategory("adult");
+  setStatus("18+ odomknuté");
+}
+
+loadMoreBtn.onclick = () => fetchPage(true);
+
+$("searchForm").addEventListener("submit", e => {
+  e.preventDefault();
+  search();
+});
+
+document.querySelectorAll(".nav button").forEach(btn => {
+  btn.addEventListener("click", () => setCategory(btn.dataset.cat));
+});
+
+$("heroSearch").onclick = () => q.focus();
+
+$("logo").onclick = () => {
+  logoClicks++;
+  clearTimeout(window.logoClickTimer);
+  window.logoClickTimer = setTimeout(() => logoClicks = 0, 1600);
+
+  if (logoClicks >= 5){
+    logoClicks = 0;
+    openPin();
+  }
+};
+
+$("pinOk").onclick = checkPin;
+$("pinCancel").onclick = closePin;
+$("pinInput").addEventListener("keydown", e => {
+  if(e.key === "Enter") checkPin();
+  if(e.key === "Escape") closePin();
+});
+
+$("ageYes").onclick = unlockAdult;
+$("ageNo").onclick = () => $("ageOverlay").classList.remove("active");
+
+$("backBtn").onclick = closePlayer;
+$("stopBtn").onclick = closePlayer;
+$("playBtn").onclick = togglePlay;
+$("rewBtn").onclick = () => seek(-10);
+$("fwdBtn").onclick = () => seek(10);
+$("fullBtn").onclick = fullscreen;
+
+video.addEventListener("timeupdate", () => {
+  if (video.duration) bar.style.width = ((video.currentTime / video.duration) * 100) + "%";
+});
+video.addEventListener("play", () => {
+  updatePlayButton();
+  scheduleHidePlayerUi();
+});
+video.addEventListener("pause", () => {
+  updatePlayButton();
+  showPlayerUi();
+});
+
+["mousemove","mousedown","touchstart","touchmove","click"].forEach(ev => {
+  player.addEventListener(ev, showPlayerUi, {passive:true});
+});
+
+document.addEventListener("keydown", e => {
+  if (player.classList.contains("active")){
+    showPlayerUi();
+
+    if (e.key === "Escape" || e.key === "Backspace"){
+      e.preventDefault();
+      closePlayer();
+    }
+    if (e.key === " " || e.key === "Enter"){
+      e.preventDefault();
+      togglePlay();
+    }
+    if (e.key === "ArrowLeft"){
+      e.preventDefault();
+      seek(-10);
+    }
+    if (e.key === "ArrowRight"){
+      e.preventDefault();
+      seek(10);
+    }
+  }
+});
+
+refreshAdultButton();
+updateLoadMoreButton();
+setCategory("video");
+</script>
+</body>
+</html>
